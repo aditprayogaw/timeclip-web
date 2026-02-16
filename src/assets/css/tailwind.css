@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@theme {
+  --color-timeclip-emerald: #1D9B66;
+  --color-timeclip-lime: #7CC154;
+  --color-timeclip-dark: #0B0F1A;
+}
+
+body {
+  background-color: var(--color-timeclip-dark);
+  color: white;
+  font-family: sans-serif;
+}
