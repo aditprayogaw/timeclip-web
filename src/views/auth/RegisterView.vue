@@ -12,7 +12,7 @@ const togglePassword = () => {
 
 <template>
     <div class="min-h-screen flex flex-col items-center justify-center bg-timeclip-dark px-6 py-12">
-        <div class="flex flex-col items-center mb-8">
+        <div class="mt-8 flex flex-col items-center mb-8">
             <img src="/TimeCVerC.png" alt="TimeClip" class="h-24 w-auto mb-2" />
         </div>
 

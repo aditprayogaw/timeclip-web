@@ -85,7 +85,7 @@ const steps = [
                     class="flex-1 bg-transparent px-6 py-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-timeclip-emerald/50" />
                 <button
                     class="bg-timeclip-emerald text-white px-10 py-4 rounded-xl font-bold hover:bg-opacity-90 transition-all flex items-center justify-center gap-2">
-                    Get Clips 🚀
+                    Get Clips
                 </button>
             </div>
         </header>

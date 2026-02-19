@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import { ChevronDown, Menu, X } from 'lucide-vue-next'
 
 const isResourcesOpen = ref(false)
@@ -44,8 +45,7 @@ const navLinks = [
     ]">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <router-link to="/" class="flex items-center gap-2 group">
-                <div
-                    class="flex items-center justify-center transition-transform">
+                <div class="flex items-center justify-center transition-transform">
                     <img src="/TimeCHoriC.png" alt="TimeClip Logo" class="h-10 w-auto object-contain" />
                 </div>
             </router-link>
@@ -112,6 +112,26 @@ const navLinks = [
                         class="bg-timeclip-emerald text-white p-4 rounded-2xl font-bold text-center">Sign Up
                         Free</router-link>
                 </div>
+            </div>
+
+            <div class="mt-auto space-y-4">
+                <div v-if="authStore.isAuthenticated" class="space-y-4">
+                    <div class="bg-gray-900 p-4 rounded-2xl border border-gray-800">
+                        <p class="text-white font-bold">{{ authStore.user?.name }}</p>
+                        <p class="text-timeclip-emerald text-xs font-black">{{ authStore.userCredits }} CREDITS LEFT</p>
+                    </div>
+                    <button @click="handleLogout"
+                        class="w-full py-4 text-center text-red-500 font-bold uppercase tracking-widest text-sm">Logout
+                        Account</button>
+                </div>
+                <template v-else>
+                    <router-link to="/login" @click="isMobileMenuOpen = false"
+                        class="block w-full py-4 text-center text-white font-bold border border-gray-800 rounded-2xl">Sign
+                        In</router-link>
+                    <router-link to="/register" @click="isMobileMenuOpen = false"
+                        class="block w-full py-4 text-center bg-timeclip-emerald text-white font-bold rounded-2xl">Create
+                        Free Account</router-link>
+                </template>
             </div>
         </transition>
     </nav>
