@@ -12,23 +12,23 @@ const notify = useNotificationStore()
 const errorMessage = ref('')
 const showPassword = ref(false)
 const form = ref({ email: '', password: '' })
+const isLoading = ref(false)
 
 const handleLogin = async () => {
-    errorMessage.value = ''
+    errorMessage.value = '' 
+    isLoading.value = true
+    
     try {
         await authStore.login(form.value)
-
-        if (authStore.isAuthenticated) {
-            // Gunakan Global Toast dari Store
-            notify.show(`Welcome back, ${authStore.user?.name}!`, 'success')
-
-            // Langsung pindah, transisi di App.vue akan mengurus kehalusannya
-            router.push('/dashboard')
-        }
+        
+        const notify = useNotificationStore()
+        notify.show('Selamat datang kembali!', 'success')
+        
+        router.push('/dashboard')
     } catch (error) {
-        // Error juga otomatis masuk ke toast via Axios Interceptor, 
-        // tapi kita bisa set lokal untuk teks di bawah form jika perlu
-        errorMessage.value = error.response?.data?.message || 'Invalid credentials'
+        errorMessage.value = error.response?.data?.message || 'Login failed'
+    } finally {
+        isLoading.value = false
     }
 }
 </script>

@@ -22,7 +22,8 @@ watch(() => route.path, () => {
 
     <Navbar v-if="!route.meta.hideNav" />
 
-    <div id="scroll-container" class="grow relative flex flex-col" :class="[route.meta.hideNav ? 'overflow-hidden' : 'overflow-y-auto']">
+    <div id="scroll-container" class="grow relative flex flex-col"
+      :class="[route.meta.hideNav ? 'overflow-hidden' : 'overflow-y-auto']">
       <main class="grow flex flex-col" :class="[!route.meta.hideNav ? 'pt-6' : '', { 'flex': route.meta.isApp }]">
         <router-view v-slot="{ Component, route: slotRoute }">
           <transition name="page" mode="out-in">
@@ -34,7 +35,30 @@ watch(() => route.path, () => {
       <Footer v-if="!route.meta.hideNav" />
     </div>
 
-    <transition name="toast">...</transition>
+    <transition name="toast">
+      <div v-if="notify.isVisible"
+        class="fixed bottom-10 right-10 z-400 flex items-center gap-4 px-6 py-4 rounded-2xl border backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-500 min-w-[320px]"
+        :class="notify.type === 'success'
+          ? 'bg-timeclip-emerald/10 border-timeclip-emerald/20 text-timeclip-emerald'
+          : 'bg-red-500/10 border-red-500/20 text-red-500'">
+
+        <div class="shrink-0">
+          <CheckCircle2 v-if="notify.type === 'success'" class="w-6 h-6" />
+          <AlertCircle v-else class="w-6 h-6" />
+        </div>
+
+        <div class="flex-1">
+          <p class="text-[10px] uppercase font-black tracking-widest opacity-50 mb-0.5">
+            {{ notify.type === 'success' ? 'Success' : 'Attention' }}
+          </p>
+          <p class="font-bold text-sm leading-tight text-white">{{ notify.message }}</p>
+        </div>
+
+        <button @click="notify.isVisible = false" class="hover:opacity-70 transition-opacity">
+          <X class="w-4 h-4 text-gray-500" />
+        </button>
+      </div>
+    </transition>
   </div>
 </template>
 

@@ -1,14 +1,23 @@
 <script setup>
 import { ref } from 'vue'
 import {
-    Home, LayoutGrid, FolderOpen, Calendar, BarChart2,
-    UserPlus, CreditCard, BookOpen, HelpCircle, LogOut,
+    Home, LayoutGrid, FolderOpen, Calendar, LogOut,
     Link as LinkIcon, Upload, Cloud
 } from 'lucide-vue-next'
+import { useNotificationStore } from '../../stores/notifications'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 
+const router = useRouter()
+const notify = useNotificationStore()
 const authStore = useAuthStore()
 const videoUrl = ref('')
+
+const handleLogout = () => {
+    authStore.logout() 
+    notify.show('Logged out successfully', 'success') 
+    router.push('/login') 
+}
 </script>
 
 <template>
@@ -50,7 +59,7 @@ const videoUrl = ref('')
                     <button
                         class="text-[10px] bg-timeclip-emerald text-white px-3 py-1 rounded-lg font-bold">Upgrade</button>
                 </div>
-                <button @click="authStore.logout()"
+                <button @click="handleLogout"
                     class="flex items-center gap-3 px-3 py-2 text-red-400 hover:bg-red-400/10 w-full rounded-xl text-sm font-bold transition-all">
                     <LogOut class="w-4 h-4" /> Logout
                 </button>
