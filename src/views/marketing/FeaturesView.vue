@@ -19,7 +19,7 @@ const allFeatures = [
 </script>
 
 <template>
-    <div class="py-24 px-6 bg-timeclip-dark">
+    <div class="pt-30 py-24 px-6 bg-timeclip-dark">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-20">
                 <h1 class="text-5xl font-black text-white mb-4">Powerful <span class="text-timeclip-emerald">AI
@@ -30,7 +30,7 @@ const allFeatures = [
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div v-for="feature in allFeatures" :key="feature.title"
-                    class="bg-gray-900/30 border border-gray-800 p-8 rounded-3xl hover:border-timeclip-emerald/40 transition-all group">
+                    class="bg-gray-900 border border-gray-800 p-8 rounded-3xl hover:border-timeclip-emerald/40 transition-all group">
                     <div
                         class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center mb-6 group-hover:bg-timeclip-emerald/10">
                         <component :is="feature.icon" class="text-timeclip-emerald w-6 h-6" />

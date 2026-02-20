@@ -14,16 +14,20 @@ const showPassword = ref(false)
 const form = ref({ email: '', password: '' })
 const isLoading = ref(false)
 
+const socialLogin = (provider) => {
+    window.location.href = `http://127.0.0.1:8000/api/auth/${provider}/redirect`;
+}
+
 const handleLogin = async () => {
-    errorMessage.value = '' 
+    errorMessage.value = ''
     isLoading.value = true
-    
+
     try {
         await authStore.login(form.value)
-        
+
         const notify = useNotificationStore()
         notify.show('Selamat datang kembali!', 'success')
-        
+
         router.push('/dashboard')
     } catch (error) {
         errorMessage.value = error.response?.data?.message || 'Login failed'
@@ -34,12 +38,12 @@ const handleLogin = async () => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-[#0B1120] flex flex-col items-center justify-center p-6">
+    <div class="min-h-screen bg-timeclip-dark flex flex-col items-center justify-center p-6">
         <div class="mb-12 flex flex-col items-center">
             <img src="/TimeCVerC.png" alt="TimeClip" class="h-24 w-auto mb-2" />
         </div>
 
-        <div class="w-full max-w-110 bg-[#111827] border border-gray-800/50 rounded-[2.5rem] p-10 shadow-2xl">
+        <div class="w-full max-w-110 bg-gray-900 border border-gray-800/50 rounded-[2.5rem] p-10 shadow-2xl">
             <div class="text-center mb-10">
                 <h1 class="text-3xl font-bold text-white mb-3">Welcome Back</h1>
                 <p class="text-gray-400 text-sm">Enter your credentials to continue</p>
@@ -81,6 +85,30 @@ const handleLogin = async () => {
                     <Loader2 v-if="authStore.isLoading" class="w-5 h-5 animate-spin" />
                     <span>{{ authStore.isLoading ? 'Processing...' : 'Sign In' }}</span>
                 </button>
+
+                <span
+                    class="block text-right text-gray-400 text-sm hover:text-white transition-colors cursor-pointer">Forgot
+                    password?
+                </span>
+
+                <span class="flex items-center gap-4 my-6">
+                    <hr class="flex-1 border-gray-700" />
+                    <span class="text-gray-500 text-[10px] uppercase tracking-widest font-black">Or continue with</span>
+                    <hr class="flex-1 border-gray-700" />
+                </span>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" @click="socialLogin('google')"
+                        class="flex items-center justify-center space-x-2 bg-gray-800/50 border border-gray-700 text-white py-3 rounded-xl hover:bg-gray-800 transition-all text-sm font-bold">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" />
+                        <span>Google</span>
+                    </button>
+                    <button type="button" @click="socialLogin('github')"
+                        class="flex items-center justify-center space-x-2 bg-gray-800/50 border border-gray-700 text-white py-3 rounded-xl hover:bg-gray-800 transition-all text-sm font-bold">
+                        <img src="https://www.svgrepo.com/show/512317/github-142.svg" class="w-5 h-5 invert" />
+                        <span>GitHub</span>
+                    </button>
+                </div>
 
                 <p class="text-center text-gray-500 text-sm mt-8">
                     New to TimeClip? <router-link to="/register"

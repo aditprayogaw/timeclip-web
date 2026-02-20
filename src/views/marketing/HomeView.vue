@@ -62,11 +62,10 @@ const steps = [
 
 <template>
     <div class="bg-timeclip-dark min-h-screen text-white">
-        <header class="pt-24 pb-16 px-6 text-center">
+        <header class="pt-30 pb-16 px-6 text-center">
             <div
                 class="inline-flex items-center space-x-2 bg-gray-900/50 border border-timeclip-lime/30 px-4 py-1.5 rounded-full mb-8">
-                <span class="text-timeclip-lime text-[10px] font-bold tracking-widest uppercase">✨ AI-Powered Clip
-                    Generation</span>
+                <span class="text-timeclip-lime text-[10px] font-bold tracking-widest uppercase">✨ AI-Powered By TimeClip</span>
             </div>
 
             <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tight">
@@ -83,10 +82,12 @@ const steps = [
                 class="max-w-3xl mx-auto bg-gray-900/40 p-2 rounded-2xl border border-gray-800 flex flex-col md:flex-row gap-3">
                 <input type="text" placeholder="Paste YouTube or TikTok URL here..."
                     class="flex-1 bg-transparent px-6 py-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-timeclip-emerald/50" />
-                <button
-                    class="bg-timeclip-emerald text-white px-10 py-4 rounded-xl font-bold hover:bg-opacity-90 transition-all flex items-center justify-center gap-2">
-                    Get Clips
-                </button>
+                <a href="/login">
+                    <button
+                        class="bg-timeclip-emerald text-white px-10 py-4 rounded-xl font-bold hover:bg-opacity-90 transition-all flex items-center justify-center gap-2">
+                        Get Clips
+                    </button>
+                </a>
             </div>
         </header>
 
@@ -111,7 +112,7 @@ const steps = [
 
             <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div v-for="feature in features" :key="feature.title"
-                    class="bg-gray-900/20 border border-gray-800 p-8 rounded-3xl hover:border-timeclip-emerald/30 transition-all group">
+                    class="bg-gray-900 border border-gray-800 p-8 rounded-3xl hover:border-timeclip-emerald/30 transition-all group">
                     <div
                         class="w-12 h-12 bg-gray-800/50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-timeclip-emerald/10">
                         <component :is="feature.icon" class="text-timeclip-emerald w-6 h-6" />
@@ -130,7 +131,7 @@ const steps = [
 
             <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div v-for="(step, index) in steps" :key="index" class="relative">
-                    <div class="bg-gray-900/40 border border-gray-800 p-8 rounded-3xl h-full">
+                    <div class="bg-gray-900 border border-gray-800 p-8 rounded-3xl h-full">
                         <div
                             class="w-8 h-8 bg-timeclip-emerald text-white rounded-full flex items-center justify-center font-bold text-sm mb-6">
                             {{ index + 1 }}
@@ -147,10 +148,12 @@ const steps = [
 
         <section class="py-24 text-center">
             <h2 class="text-4xl font-bold mb-8 text-white px-6">Ready to go viral?</h2>
-            <button
-                class="bg-timeclip-emerald text-white px-12 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-all shadow-xl shadow-timeclip-emerald/10">
-                Start Creating for Free
-            </button>
+            <a href="/login">
+                <button
+                    class="bg-timeclip-emerald text-white px-12 py-4 rounded-2xl font-bold text-lg hover:scale-105 transition-all shadow-xl shadow-timeclip-emerald/10">
+                    Start Creating for Free
+                </button>
+            </a>
         </section>
     </div>
 </template>

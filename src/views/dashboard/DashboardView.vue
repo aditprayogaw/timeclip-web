@@ -21,7 +21,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-    <div class="flex h-screen w-full overflow-hidden bg-[#0B0F17] pt-10">
+    <div class="flex h-screen w-full overflow-hidden bg-[#0B0F17]">
         <aside class="w-64 border-r border-gray-800 flex flex-col p-4 bg-[#0B0F17]">
             <div class="mb-8 px-2">
                 <a href="/">

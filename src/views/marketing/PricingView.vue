@@ -35,7 +35,7 @@ const faqs = [
 </script>
 
 <template>
-    <div class="py-24 px-6 bg-timeclip-dark min-h-screen">
+    <div class="py-30 px-6 bg-timeclip-dark min-h-screen">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-20">
                 <h1 class="text-5xl font-black text-white mb-4">Simple, Transparent <span
@@ -45,7 +45,7 @@ const faqs = [
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
                 <div v-for="plan in plans" :key="plan.name"
-                    class="bg-gray-900/30 border p-10 rounded-[2.5rem] flex flex-col relative transition-all"
+                    class="bg-gray-900 border p-10 rounded-[2.5rem] flex flex-col relative transition-all"
                     :class="plan.popular ? 'border-timeclip-emerald scale-105 shadow-2xl shadow-timeclip-emerald/10' : 'border-gray-800'">
 
                     <div v-if="plan.popular"
@@ -80,14 +80,14 @@ const faqs = [
                 <h2 class="text-3xl font-bold text-white text-center mb-12 tracking-tight">Frequently Asked Questions
                 </h2>
                 <div class="space-y-4">
-                    <div v-for="faq in faqs" :key="faq.q" class="bg-gray-900/40 border border-gray-800 p-8 rounded-3xl">
+                    <div v-for="faq in faqs" :key="faq.q" class="bg-gray-900 border border-gray-800 p-8 rounded-3xl">
                         <h4 class="text-white font-bold mb-2">{{ faq.q }}</h4>
                         <p class="text-gray-500 text-sm leading-relaxed">{{ faq.a }}</p>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-gray-900/20 border border-gray-800 p-16 rounded-[3rem] text-center">
+            <div class="bg-gray-900 border border-gray-800 p-16 rounded-[3rem] text-center">
                 <h2 class="text-3xl font-bold text-white mb-4">Still have questions?</h2>
                 <p class="text-gray-400 mb-10 text-sm">Our team is here to help you find the perfect plan</p>
                 <button

@@ -27,7 +27,7 @@ const solutions = [
 </script>
 
 <template>
-    <div class="py-24 px-6 bg-timeclip-dark min-h-screen">
+    <div class="py-30 px-6 bg-timeclip-dark min-h-screen">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-20">
                 <h1 class="text-5xl font-black text-white mb-6">Built for Every <span
@@ -40,7 +40,7 @@ const solutions = [
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div v-for="sol in solutions" :key="sol.title"
-                    class="bg-gray-900/20 border border-gray-800 p-10 rounded-4xl flex flex-col hover:border-timeclip-emerald/30 transition-all group">
+                    class="bg-gray-900 border border-gray-800 p-10 rounded-4xl flex flex-col hover:border-timeclip-emerald/30 transition-all group">
                     <div
                         class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-timeclip-emerald/10 transition-colors">
                         <component :is="sol.icon" class="text-timeclip-emerald w-7 h-7" />
@@ -63,10 +63,12 @@ const solutions = [
 
             <div class="mt-20 bg-gray-900/30 border border-gray-800 p-12 rounded-[2.5rem] text-center">
                 <h2 class="text-3xl font-bold text-white mb-4">Ready to Scale Your Content?</h2>
-                <button
-                    class="bg-timeclip-emerald text-white px-10 py-4 rounded-xl font-bold hover:bg-opacity-90 transition-all">
-                    Get Started Now
-                </button>
+                <a href="/login">
+                    <button
+                        class="bg-timeclip-emerald text-white px-10 py-4 rounded-xl font-bold hover:bg-opacity-90 transition-all">
+                        Get Started Now
+                    </button>
+                </a>
             </div>
         </div>
     </div>
