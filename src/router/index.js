@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import NProgress from 'nprogress' 
+import NProgress from 'nprogress'
 
 import HomeView from '../views/marketing/HomeView.vue'
+import DashboardView from '../views/dashboard/DashboardView.vue'
+import LoginView from '../views/auth/LoginView.vue'
 
 const routes = [
   // --- MARKETING DOMAIN ---
@@ -30,7 +32,7 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/auth/LoginView.vue')
+    component: LoginView
   },
   {
     path: '/register',
@@ -65,7 +67,14 @@ const routes = [
     path: '/terms-of-service',
     name: 'terms',
     component: () => import('../views/legal/TermsOfServiceView.vue')
-  }
+  },
+
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: DashboardView,
+    meta: { requiresAuth: true, hideNav: true, isApp: true }
+  },
 ]
 
 const router = createRouter({
@@ -76,9 +85,9 @@ const router = createRouter({
     if (savedPosition) {
       return savedPosition
     } else {
-      return { 
-        top: 0, 
-        behavior: 'smooth' 
+      return {
+        top: 0,
+        behavior: 'smooth'
       }
     }
   }
@@ -86,9 +95,20 @@ const router = createRouter({
 
 // Integrasi NProgress dengan Router Guard
 router.beforeEach((to, from, next) => {
-  NProgress.start()
-  next()
-})
+  NProgress.start() // Jangan lupa start progress bar-nya
+
+  const isAuthenticated = !!localStorage.getItem('token');
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/login');
+  }
+  else if (isAuthenticated && (to.path === '/login' || to.path === '/register')) {
+    next('/dashboard');
+  }
+  else {
+    next();
+  }
+});
 
 router.afterEach(() => {
   NProgress.done()

@@ -1,43 +1,30 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import api from '../utils/axios'
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         user: JSON.parse(localStorage.getItem('user')) || null,
         token: localStorage.getItem('token') || null,
-        isLoading: false,
     }),
-
     getters: {
+        // Getter ini yang dipantau oleh Navbar
         isAuthenticated: (state) => !!state.token,
-        userCredits: (state) => state.user ? state.user.credits : 0,
+        userCredits: (state) => state.user?.remaining_credits || 0
     },
-
     actions: {
         async login(credentials) {
-            this.isLoading = true
-            try {
-                const response = await axios.post('http://127.0.0.1:8000/api/mock/login', credentials)
-                
-                this.user = response.data.user
-                this.token = response.data.access_token
-                
-                localStorage.setItem('user', JSON.stringify(this.user))
-                localStorage.setItem('token', this.token)
-                
-                return response.data
-            } finally {
-                this.isLoading = false
-            }
+            const response = await api.post('/login', credentials)
+            // Simpan ke state agar reaktif
+            this.token = response.data.access_token
+            this.user = response.data.user
+            // Simpan ke storage agar tidak hilang saat refresh
+            localStorage.setItem('token', this.token)
+            localStorage.setItem('user', JSON.stringify(this.user))
         },
-
         logout() {
-            this.user = null
             this.token = null
-            localStorage.removeItem('user')
-            localStorage.removeItem('token')
+            this.user = null
+            localStorage.clear()
         }
-
-    }    
-
-})    
+    }
+})
