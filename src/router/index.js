@@ -75,6 +75,18 @@ const routes = [
     component: DashboardView,
     meta: { requiresAuth: true, hideNav: true, isApp: true }
   },
+  {
+    path: '/dashboard/process/:id',
+    name: 'processing',
+    component: () => import('../views/dashboard/ProcessingView.vue'),
+    meta: { hideNav: true, isApp: true }
+  },
+  {
+    path: '/dashboard/clips/:id',
+    name: 'clips-grid',
+    component: () => import('../views/dashboard/ClipsGridView.vue'),
+    meta: { hideNav: true, isApp: true }
+  },
 ]
 
 const router = createRouter({

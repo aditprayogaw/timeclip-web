@@ -30,7 +30,7 @@ const solutions = [
     <div class="py-30 px-6 bg-timeclip-dark min-h-screen">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-20">
-                <h1 class="text-5xl font-black text-white mb-6">Built for Every <span
+                <h1 class="text-5xl font-bold text-white mb-6">Built for Every <span
                         class="text-timeclip-emerald">Workflow</span></h1>
                 <p class="text-gray-400 max-w-2xl mx-auto font-medium">
                     TimeClip menyesuaikan dengan kebutuhan produksi konten Anda, baik bekerja sendiri maupun dalam tim

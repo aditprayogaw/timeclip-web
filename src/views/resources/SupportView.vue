@@ -1,7 +1,7 @@
 <template>
     <div class="py-24 px-6 bg-timeclip-dark min-h-screen text-center">
         <div class="max-w-3xl mx-auto">
-            <h1 class="text-5xl font-black text-white mb-6">How can we <span class="text-timeclip-emerald">help?</span>
+            <h1 class="text-5xl font-bold text-white mb-6">How can we <span class="text-timeclip-emerald">help?</span>
             </h1>
             <p class="text-gray-400 mb-12">Search our knowledge base or contact our support team directly.</p>
 

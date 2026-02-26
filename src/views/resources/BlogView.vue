@@ -9,7 +9,7 @@ const posts = [
 <template>
     <div class="py-24 px-6 bg-timeclip-dark min-h-screen">
         <div class="max-w-7xl mx-auto">
-            <h1 class="text-5xl font-black text-white mb-12 text-center">TimeClip <span
+            <h1 class="text-5xl font-bold text-white mb-12 text-center">TimeClip <span
                     class="text-timeclip-emerald">Blog</span></h1>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div v-for="post in posts" :key="post.title"

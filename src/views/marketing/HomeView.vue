@@ -68,7 +68,7 @@ const steps = [
                 <span class="text-timeclip-lime text-[10px] font-bold tracking-widest uppercase">✨ AI-Powered By TimeClip</span>
             </div>
 
-            <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tight">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight tracking-tight">
                 Turn Videos Into <br />
                 <span class="text-timeclip-emerald">Viral Clips</span>
             </h1>
@@ -95,7 +95,7 @@ const steps = [
             <div class="max-w-7xl mx-auto px-6">
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
                     <div v-for="stat in stats" :key="stat.label" class="text-center p-6">
-                        <h3 class="text-4xl font-black text-white mb-1">{{ stat.value }}</h3>
+                        <h3 class="text-4xl font-bold text-white mb-1">{{ stat.value }}</h3>
                         <p class="text-gray-500 text-[10px] uppercase tracking-widest font-bold">{{ stat.label }}</p>
                     </div>
                 </div>

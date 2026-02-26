@@ -38,7 +38,7 @@ const faqs = [
     <div class="py-30 px-6 bg-timeclip-dark min-h-screen">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-20">
-                <h1 class="text-5xl font-black text-white mb-4">Simple, Transparent <span
+                <h1 class="text-5xl font-bold text-white mb-4">Simple, Transparent <span
                         class="text-timeclip-emerald">Pricing</span></h1>
                 <p class="text-gray-400">Choose the plan that fits your needs. No hidden fees, cancel anytime.</p>
             </div>
@@ -49,7 +49,7 @@ const faqs = [
                     :class="plan.popular ? 'border-timeclip-emerald scale-105 shadow-2xl shadow-timeclip-emerald/10' : 'border-gray-800'">
 
                     <div v-if="plan.popular"
-                        class="absolute -top-4 left-1/2 -translate-x-1/2 bg-timeclip-emerald text-white text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">
+                        class="absolute -top-4 left-1/2 -translate-x-1/2 bg-timeclip-emerald text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest">
                         Most Popular
                     </div>
 
@@ -57,7 +57,7 @@ const faqs = [
                     <p class="text-gray-500 text-xs mb-6">{{ plan.desc }}</p>
 
                     <div class="flex items-baseline mb-8">
-                        <span class="text-4xl font-black text-white">${{ plan.price }}</span>
+                        <span class="text-4xl font-bold text-white">${{ plan.price }}</span>
                         <span class="text-gray-500 text-sm ml-2">/ per month</span>
                     </div>
 

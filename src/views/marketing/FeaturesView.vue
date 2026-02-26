@@ -22,7 +22,7 @@ const allFeatures = [
     <div class="pt-30 py-24 px-6 bg-timeclip-dark">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-20">
-                <h1 class="text-5xl font-black text-white mb-4">Powerful <span class="text-timeclip-emerald">AI
+                <h1 class="text-5xl font-bold text-white mb-4">Powerful <span class="text-timeclip-emerald">AI
                         Features</span></h1>
                 <p class="text-gray-400 max-w-2xl mx-auto">Everything you need to dominate social media with short-form
                     content.</p>

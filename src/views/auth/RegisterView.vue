@@ -57,13 +57,13 @@ const handleRegister = async () => {
 
         <div class="w-full max-w-110 bg-gray-900 border border-gray-800 p-10 rounded-[2.5rem] shadow-2xl">
             <div class="text-center mb-8">
-                <h2 class="text-3xl font-black text-white mb-2">Join TimeClip</h2>
+                <h2 class="text-3xl font-bold text-white mb-1">Join TimeClip</h2>
                 <p class="text-gray-500 text-sm">Create viral clips with 10 free credits</p>
             </div>
 
             <form @submit.prevent="handleRegister" class="space-y-5">
                 <div class="space-y-2">
-                    <label class="text-gray-400 text-[10px] font-black uppercase tracking-widest ml-1">Full name</label>
+                    <label class="text-gray-400 text-[10px] font-bold uppercase tracking-widest ml-1">Full name</label>
                     <div class="relative">
                         <User class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
                         <input v-model="form.name" type="text" placeholder="ex: Nobaru" required
@@ -72,7 +72,7 @@ const handleRegister = async () => {
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-gray-400 text-[10px] font-black uppercase tracking-widest ml-1">Email
+                    <label class="text-gray-400 text-[10px] font-bold uppercase tracking-widest ml-1">Email
                         address</label>
                     <div class="relative">
                         <Mail class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
@@ -82,7 +82,7 @@ const handleRegister = async () => {
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-gray-400 text-[10px] font-black uppercase tracking-widest ml-1">Password (min. 8
+                    <label class="text-gray-400 text-[10px] font-bold uppercase tracking-widest ml-1">Password (min. 8
                         char)</label>
                     <div class="relative">
                         <Lock class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
@@ -98,7 +98,7 @@ const handleRegister = async () => {
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-gray-400 text-[10px] font-black uppercase tracking-widest ml-1">Confirm
+                    <label class="text-gray-400 text-[10px] font-bold uppercase tracking-widest ml-1">Confirm
                         Password</label>
                     <div class="relative">
                         <Lock class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
@@ -109,14 +109,14 @@ const handleRegister = async () => {
                 </div>
 
                 <button :disabled="isLoading"
-                    class="w-full bg-timeclip-emerald text-white py-4 rounded-2xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 hover:bg-opacity-90 transition-all shadow-xl shadow-timeclip-emerald/10 disabled:opacity-50">
+                    class="w-full bg-timeclip-emerald text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-3 hover:bg-opacity-90 transition-all shadow-xl shadow-timeclip-emerald/10 disabled:opacity-50">
                     <Loader2 v-if="isLoading" class="w-5 h-5 animate-spin" />
                     <span>{{ isLoading ? 'Creating account...' : 'Create account' }}</span>
                 </button>
 
                 <span class="flex items-center gap-4 my-6">
                     <hr class="flex-1 border-gray-700" />
-                     <span class="text-gray-500 text-[10px] uppercase tracking-widest font-black">Or continue with</span>
+                     <span class="text-gray-500 text-[10px] uppercase tracking-widest font-bold">Or continue with</span>
                     <hr class="flex-1 border-gray-700" />
                 </span>
 
@@ -137,7 +137,7 @@ const handleRegister = async () => {
 
             <div class="mt-8 text-center text-sm">
                 <span class="text-gray-500">Already have an account? </span>
-                <router-link to="/login" class="text-timeclip-emerald font-black hover:underline">Sign In</router-link>
+                <router-link to="/login" class="text-timeclip-emerald font-bold hover:underline">Sign In</router-link>
             </div>
         </div>
     </div>

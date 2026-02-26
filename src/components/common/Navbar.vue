@@ -120,7 +120,7 @@ const navLinks = [
                 class="fixed inset-0 top-18 bg-timeclip-dark z-50 p-6 md:hidden flex flex-col gap-8">
                 <div class="flex flex-col gap-6">
                     <router-link v-for="link in [...navLinks, ...resourceLinks]" :key="link.path" :to="link.path"
-                        @click="isMobileMenuOpen = false" class="text-3xl font-black text-white">
+                        @click="isMobileMenuOpen = false" class="text-3xl font-bold text-white">
                         {{ link.name }}
                     </router-link>
                 </div>
@@ -128,8 +128,8 @@ const navLinks = [
                 <div class="mt-auto space-y-4">
                     <template v-if="authStore.isAuthenticated">
                         <div class="bg-gray-900 p-6 rounded-4xl border border-gray-800 mb-4">
-                            <p class="text-white text-xl font-black mb-1">{{ authStore.user?.name }}</p>
-                            <p class="text-timeclip-emerald text-xs font-black uppercase tracking-widest">
+                            <p class="text-white text-xl font-bold mb-1">{{ authStore.user?.name }}</p>
+                            <p class="text-timeclip-emerald text-xs font-bold uppercase tracking-widest">
                                 {{ authStore.userCredits }} Credits Left
                             </p>
                         </div>
@@ -145,11 +145,13 @@ const navLinks = [
 
                     <template v-else>
                         <router-link to="/login" @click="isMobileMenuOpen = false"
-                            class="flex w-full py-4 text-center text-white font-bold border border-gray-800 rounded-2xl">Sign
-                            In</router-link>
+                            class="flex w-full py-4 text-center text-white font-bold border border-gray-800 rounded-2xl">
+                            Sign In
+                        </router-link>
                         <router-link to="/register" @click="isMobileMenuOpen = false"
-                            class="flex w-full py-4 text-center bg-timeclip-emerald text-white font-bold rounded-2xl">Sign
-                            Up</router-link>
+                            class="flex w-full py-4 text-center bg-timeclip-emerald text-white transition-all duration-300 hover:bg-emerald-400 font-bold rounded-2xl">
+                            Sign Up
+                        </router-link>
                     </template>
                 </div>
             </div>

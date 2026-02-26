@@ -45,7 +45,7 @@ const handleLogin = async () => {
 
         <div class="w-full max-w-110 bg-gray-900 border border-gray-800/50 rounded-[2.5rem] p-10 shadow-2xl">
             <div class="text-center mb-10">
-                <h1 class="text-3xl font-bold text-white mb-3">Welcome Back</h1>
+                <h1 class="text-3xl font-bold text-white mb-1">Welcome Back</h1>
                 <p class="text-gray-400 text-sm">Enter your credentials to continue</p>
             </div>
 
