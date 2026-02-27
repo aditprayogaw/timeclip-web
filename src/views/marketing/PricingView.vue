@@ -1,26 +1,49 @@
 <script setup>
 const plans = [
     {
-        name: 'Free',
-        price: '0',
-        desc: 'Perfect for trying out TimeClip',
-        features: ['10 clips per month', '720p export quality', 'Basic AI detection', 'YouTube & TikTok support', 'Community support'],
-        button: 'Get Started',
+        name: 'Starter',
+        price: '12',
+        desc: 'Great for rising content creators',
+        features: [
+            '100 Credits (Monthly)',
+            'Max 30 Min Video Duration',
+            '1080p Export Quality',
+            'No Watermark',
+            'Full AI Agent Access',
+            '10 GB Cloud Storage'
+        ],
+        button: 'Choose Starter',
         popular: false
     },
     {
         name: 'Pro',
         price: '29',
-        desc: 'For serious content creators',
-        features: ['Unlimited clips', '4K export quality', 'Advanced AI detection', 'All platform support', 'Priority support', 'Custom branding', 'Batch processing', 'API access'],
+        desc: 'For serious professional creators',
+        features: [
+            '300 Credits (Monthly)',
+            'Max 60 Min Video Duration',
+            '4K Export Quality',
+            'No Watermark',
+            'Priority AI Agent Access',
+            '50 GB Cloud Storage',
+            'Batch Processing'
+        ],
         button: 'Start Free Trial',
         popular: true
     },
     {
-        name: 'Team',
-        price: '99',
-        desc: 'For teams and agencies',
-        features: ['Everything in Pro', '5 team members', 'Shared workspace', 'Advanced analytics', 'Dedicated support', 'Custom integrations', 'SSO authentication', 'Volume discounts'],
+        name: 'Business',
+        price: '89',
+        desc: 'For teams and production houses',
+        features: [
+            'Unlimited Credits',
+            'Unlimited Video Duration',
+            '4K + Pro-Res Export',
+            'No Watermark',
+            'Custom AI Model Training',
+            '500 GB Cloud Storage',
+            'Dedicated Account Manager'
+        ],
         button: 'Contact Sales',
         popular: false
     }

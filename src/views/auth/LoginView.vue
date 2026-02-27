@@ -97,12 +97,7 @@ const handleLogin = async () => {
                     <hr class="flex-1 border-gray-700" />
                 </span>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <button type="button" @click="socialLogin('google')"
-                        class="flex items-center justify-center space-x-2 bg-gray-800/50 border border-gray-700 text-white py-3 rounded-xl hover:bg-gray-800 transition-all text-sm font-bold">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" />
-                        <span>Google</span>
-                    </button>
+                <div class="grid grid-cols-1 gap-4">
                     <button type="button" @click="socialLogin('github')"
                         class="flex items-center justify-center space-x-2 bg-gray-800/50 border border-gray-700 text-white py-3 rounded-xl hover:bg-gray-800 transition-all text-sm font-bold">
                         <img src="https://www.svgrepo.com/show/512317/github-142.svg" class="w-5 h-5 invert" />
