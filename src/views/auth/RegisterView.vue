@@ -12,7 +12,7 @@ const isLoading = ref(false)
 const showPassword = ref(false)
 
 const socialLogin = (provider) => {
-    window.location.href = `http://127.0.0.1:8000/api/auth/${provider}/redirect`;
+    window.location.href = `http://localhost:8000/api/auth/${provider}/redirect`;
 }
 
 const form = ref({
@@ -23,7 +23,6 @@ const form = ref({
 })
 
 const handleRegister = async () => {
-    // Validasi sederhana client-side
     if (form.value.password.length < 8) {
         notify.show('Password must be at least 8 characters', 'error')
         return
@@ -36,13 +35,21 @@ const handleRegister = async () => {
 
     isLoading.value = true
     try {
+        await api.get('/sanctum/csrf-cookie')
+
         const response = await api.post('/register', form.value)
 
         notify.show('Account created! Please log in.', 'success')
-
         router.push('/login')
+        
     } catch (error) {
-        // Error 422
+
+        if (error.response && error.response.status === 422) {
+            const firstError = Object.values(error.response.data.errors)[0][0]
+            notify.show(firstError, 'error')
+        } else {
+            notify.show('Something went wrong', 'error')
+        }
     } finally {
         isLoading.value = false
     }

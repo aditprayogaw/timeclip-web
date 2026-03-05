@@ -7,7 +7,7 @@ import {
 } from 'lucide-vue-next'
 import { useNotificationStore } from '../../stores/notifications'
 import { useAuthStore } from '../../stores/auth'
-import api from '../../utils/axios' 
+import api from '../../utils/axios'
 
 const router = useRouter()
 const notify = useNotificationStore()
@@ -24,28 +24,36 @@ const handleLogout = () => {
 
 // Fungsi Utama untuk Memproses Video
 const handleProcessVideo = async () => {
-    if (!videoUrl.value) {
-        notify.show('Please paste a YouTube or Twitch link first', 'error')
-        return
+    // Validasi YouTube tetap wajib
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+    if (!youtubeRegex.test(videoUrl.value)) {
+        notify.show('Hanya link YouTube yang didukung', 'error');
+        return;
     }
 
-    isLoading.value = true
+    isLoading.value = true;
     try {
-        // Mengirim URL ke endpoint Laravel
+        await api.get('http://localhost:8000/sanctum/csrf-cookie');
+
         const response = await api.post('/videos/process', {
-            url: videoUrl.value
-        })
+            url: videoUrl.value,
+            title: "Viral Clip " + new Date().toLocaleDateString(),
+            duration: 60
+        });
 
-        notify.show('Video processing started!', 'success')
-
-        router.push(`/dashboard/process/${response.data.data.id}`)
+        notify.show('Video mulai diproses!', 'success');
+        router.push(`/dashboard/process/${response.data.data.id}`);
     } catch (error) {
-        // Error 422 atau Kredit Habis akan ditangani oleh Interceptor Axios kamu
-        console.error('Processing error:', error)
+        // Penanganan jika jabat tangan gagal (Error 419)
+        if (error.response?.status === 419) {
+            notify.show('Sesi kadaluarsa, silakan login ulang di localhost:5173', 'error');
+        } else {
+            notify.show(error.response?.data?.message || 'Gagal terhubung', 'error');
+        }
     } finally {
-        isLoading.value = false
+        isLoading.value = false;
     }
-}
+};
 </script>
 
 <template>
