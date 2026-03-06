@@ -17,6 +17,7 @@ const progress = ref(0)
 const currentStepIndex = ref(0)
 const videoStatus = ref('pending') // Mengikuti status asli backend
 const errorMessage = ref(null)
+const isCompleted = ref(false)
 let pollInterval = null
 
 // Fungsi Polling untuk mengecek status video
