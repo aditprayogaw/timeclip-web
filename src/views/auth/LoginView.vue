@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 import { useNotificationStore } from '../../stores/notifications'
-import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-vue-next'
+import { Mail, Lock, Eye, EyeOff, Loader2, X } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -12,13 +12,23 @@ const notify = useNotificationStore()
 const errorMessage = ref('')
 const showPassword = ref(false)
 const form = ref({ email: '', password: '' })
-const isLoading = ref(false) // Gunakan ini secara konsisten
+const isLoading = ref(false)
 
+/**
+ * Handle Social Login (GitHub/Google) via Ngrok
+ * Mengambil root URL dari .env agar tidak hardcoded localhost
+ */
 const socialLogin = (provider) => {
-    // Sesuai Section 2.5: OAuth GitHub [cite: 60, 61]
-    window.location.href = `http://localhost:8000/api/auth/${provider}/redirect`;
+    // Ambil base URL dari env, hilangkan /api untuk dapat root domain
+    const rootUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
+
+    // Redirect ke endpoint backend via Ngrok
+    window.location.href = `${rootUrl}/api/auth/${provider}/redirect`;
 }
 
+/**
+ * Handle Email & Password Login
+ */
 const handleLogin = async () => {
     errorMessage.value = ''
     isLoading.value = true
@@ -26,21 +36,29 @@ const handleLogin = async () => {
     try {
         const response = await authStore.login(form.value)
 
+        // Cek sukses berdasarkan response data
         if (response.data.status === 'success') {
             notify.show('Selamat datang kembali!', 'success')
 
             const userRole = response.data.user.role;
 
+            // Role-based routing
             if (userRole === 'admin') {
                 router.push('/admin/dashboard')
             } else if (userRole === 'owner') {
-                router.push('/owner/dashboard') // Jika owner juga mau dipisah
+                router.push('/owner/dashboard')
             } else {
-                router.push('/dashboard') // Default untuk tenant/user biasa
+                router.push('/dashboard')
             }
         }
     } catch (error) {
-        errorMessage.value = error.response?.data?.message || 'Email atau password salah!'
+        // Tangani error spesifik CSRF (419) yang sering muncul di Ngrok
+        if (error.response?.status === 419) {
+            errorMessage.value = 'Session expired / CSRF mismatch. Silakan refresh halaman.'
+        } else {
+            errorMessage.value = error.response?.data?.message || 'Email atau password salah!'
+        }
+        console.error("Login error:", error);
     } finally {
         isLoading.value = false
     }
@@ -96,9 +114,8 @@ const handleLogin = async () => {
                     <span>{{ isLoading ? 'Processing...' : 'Sign In' }}</span>
                 </button>
 
-                <span
-                    class="block text-right text-gray-400 text-sm hover:text-white transition-colors cursor-pointer">Forgot
-                    password?
+                <span class="block text-right text-gray-400 text-sm hover:text-white transition-colors cursor-pointer">
+                    Forgot password?
                 </span>
 
                 <span class="flex items-center gap-4 my-6">
