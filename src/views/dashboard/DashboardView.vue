@@ -126,16 +126,37 @@ onUnmounted(() => {
             </nav>
 
             <div class="mt-auto pt-6 space-y-4 border-t border-white/5">
-                <div class="p-5 bg-white/2 rounded-2xl border border-white/5">
-                    <p
-                        class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-                        <Zap class="w-3 h-3 text-emerald-400" /> AI Credits
-                    </p>
-                    <div class="flex justify-between items-end">
-                        <p class="text-2xl font-semibold text-white leading-none">{{ authStore.user?.remaining_credits
-                            || 0 }}</p>
-                        <p class="text-[9px] text-slate-600 font-medium">REMAINING</p>
+                <div class="p-5 bg-white/2 rounded-2xl border border-white/5 flex flex-col gap-4">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <p
+                                class="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-2">
+                                <Zap class="w-3 h-3 text-emerald-400" /> AI Credits
+                            </p>
+                            <span :class="{
+                                'text-emerald-400 bg-emerald-400/10 border-emerald-400/20': authStore.userTier !== 'FREE',
+                                'text-slate-500 bg-white/5 border-white/5': authStore.userTier === 'FREE'
+                            }" class="text-[8px] px-2 py-0.5 rounded-full border font-black tracking-widest uppercase">
+                                {{ authStore.userTier }}
+                            </span>
+                        </div>
+
+                        <div class="flex justify-between items-end">
+                            <p class="text-2xl font-semibold text-white leading-none">
+                                {{ authStore.user?.remaining_credits || 0 }}
+                            </p>
+                        </div>
                     </div>
+
+                    <router-link to="/pricing"
+                        class="w-full py-2 bg-emerald-400/10 hover:bg-emerald-400 text-emerald-400 hover:text-black text-[10px] font-black uppercase tracking-widest rounded-xl text-center transition-all border border-emerald-400/20 hover:border-emerald-400">
+                        Upgrade Plan
+                    </router-link>
+
+                    <p v-if="authStore.user?.remaining_credits < 5"
+                        class="text-[9px] text-red-400 font-bold animate-pulse text-center">
+                        ⚠️ Credits almost out!
+                    </p>
                 </div>
                 <button @click="authStore.logout(); router.push('/login')"
                     class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-400/5 w-full rounded-xl text-sm font-semibold transition-all">
@@ -146,14 +167,14 @@ onUnmounted(() => {
 
         <main class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-[#0A0C10]">
 
-            <section
-                class="py-20 px-12 flex flex-col items-center justify-center relative border-b border-white/3">
+            <section class="py-20 px-12 flex flex-col items-center justify-center relative border-b border-white/3">
                 <div class="w-full max-w-2xl text-center relative z-10">
                     <div class="mb-10">
                         <div
                             class="inline-flex items-center gap-2 bg-emerald-500/5 border border-emerald-500/10 px-4 py-1.5 rounded-full mb-6">
                             <Sparkles class="w-3 h-3 text-emerald-400" />
-                            <span class="text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Powered By TimeClip AI</span>
+                            <span class="text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Powered By
+                                TimeClip AI</span>
                         </div>
                         <h2 class="text-5xl font-bold tracking-tight text-white mb-4">
                             Transforming Videos <br /> <span class="text-slate-500 font-medium">into Highlights.</span>
@@ -182,7 +203,7 @@ onUnmounted(() => {
                         Library
                         <span
                             class="px-2.5 py-0.5 bg-white/3 text-[11px] text-slate-500 rounded-lg border border-white/5 font-medium">{{
-                            allVideos.length }}</span>
+                                allVideos.length }}</span>
                     </h3>
 
                     <div v-if="totalPages > 1" class="flex items-center gap-2">

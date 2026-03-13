@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import {
     CreditCard, Search, Download, Filter,
-    CheckCircle2, Clock, AlertCircle, ArrowUpRight
+    CheckCircle2, Clock, AlertCircle, Zap
 } from 'lucide-vue-next'
 import api from '../../utils/axios'
 
@@ -12,6 +12,7 @@ const isLoading = ref(true)
 const fetchTransactions = async () => {
     isLoading.value = true
     try {
+        // Endpoint admin sesuai Section 9.2 [cite: 251]
         const response = await api.get('/admin/transactions')
         transactions.value = response.data.data || []
     } catch (error) {
@@ -43,30 +44,15 @@ const getStatusTheme = (status) => {
                     <div class="p-2 bg-sky-500/10 rounded-lg border border-sky-500/20">
                         <CreditCard class="w-5 h-5 text-sky-400" />
                     </div>
-                    <h2 class="text-3xl font-bold text-white tracking-tight">Marketing & Rev</h2>
+                    <h2 class="text-3xl font-bold text-white tracking-tight">Revenue Management</h2>
                 </div>
-                <p class="text-slate-500 text-sm">Monitoring pendapatan dan status pembayaran Midtrans secara real-time.
-                </p>
+                <p class="text-slate-500 text-sm">Monitoring sirkulasi saldo dan upgrade tier user.</p>
             </div>
 
-            <div class="flex items-center gap-3">
-                <button
-                    class="flex items-center gap-2 px-4 py-2.5 bg-[#0E1118] border border-white/5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all uppercase tracking-widest">
-                    <Download class="w-4 h-4" /> Export CSV
-                </button>
-            </div>
-        </div>
-
-        <div class="bg-[#0E1118] border border-white/5 p-4 rounded-2xl flex flex-wrap gap-4 items-center">
-            <div class="relative flex-1 min-w-75]">
-                <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
-                <input type="text" placeholder="Cari Order ID atau Email..."
-                    class="w-full bg-white/2 border border-white/5 text-slate-300 pl-11 pr-4 py-2.5 rounded-xl focus:border-emerald-500/30 outline-none transition-all text-sm placeholder:text-slate-700" />
-            </div>
-            <button
-                class="px-4 py-2.5 bg-white/2 border border-white/5 rounded-xl text-xs font-bold text-slate-500 flex items-center gap-2">
-                <Filter class="w-4 h-4" /> Filter
-            </button>
+            <!-- <button
+                class="flex items-center gap-2 px-4 py-2.5 bg-[#0E1118] border border-white/5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all uppercase tracking-widest">
+                <Download class="w-4 h-4" /> Export CSV
+            </button> -->
         </div>
 
         <div class="bg-[#0E1118] border border-white/5 rounded-4xl overflow-hidden shadow-2xl">
@@ -74,10 +60,10 @@ const getStatusTheme = (status) => {
                 <thead>
                     <tr class="border-b border-white/5 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
                         <th class="px-8 py-6">Order ID</th>
-                        <th class="px-8 py-6">Customer</th>
+                        <th class="px-8 py-6">Customer & Tier</th>
                         <th class="px-8 py-6">Amount</th>
                         <th class="px-8 py-6">Status</th>
-                        <th class="px-8 py-6 text-right">Date</th>
+                        <th class="px-8 py-6 text-right">Transaction Date</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-white/2">
@@ -85,47 +71,51 @@ const getStatusTheme = (status) => {
                         <td colspan="5" class="px-8 py-6 h-16 bg-white/1"></td>
                     </tr>
 
-                    <tr v-else v-for="tx in transactions" :key="tx.id"
-                        class="group hover:bg-white/1 transition-all">
+                    <tr v-else v-for="tx in transactions" :key="tx.id" class="group hover:bg-white/1 transition-all">
                         <td class="px-8 py-6">
                             <span
-                                class="text-sm font-bold text-slate-300 group-hover:text-emerald-400 transition-colors">#{{
-                                tx.order_id }}</span>
+                                class="text-sm font-bold text-slate-300 group-hover:text-emerald-400 transition-colors">
+                                {{ tx.external_id }}
+                            </span>
                         </td>
+
                         <td class="px-8 py-6">
-                            <div class="flex flex-col">
-                                <span class="text-sm font-medium text-slate-400">{{ tx.user_email }}</span>
-                                <span class="text-[10px] text-slate-600 uppercase font-bold tracking-tighter mt-1">ID:
-                                    {{ tx.user_id }}</span>
+                            <div class="flex flex-col gap-1.5">
+                                <span class="text-sm font-medium text-slate-400">{{ tx.user?.email || 'User ID: ' +
+                                    tx.user_id }}</span>
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="px-2 py-0.5 bg-sky-500/10 text-sky-400 border border-sky-500/20 rounded text-[9px] font-black uppercase tracking-tighter">
+                                        {{ tx.tier_plan }}
+                                    </span>
+                                </div>
                             </div>
                         </td>
+
                         <td class="px-8 py-6 text-sm font-bold text-white">
-                            Rp {{ tx.amount?.toLocaleString() }}
+                            Rp {{ parseFloat(tx.amount).toLocaleString() }}
                         </td>
+
                         <td class="px-8 py-6">
                             <div
                                 :class="['inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase border', getStatusTheme(tx.status)]">
-                                <component :is="tx.status === 'settlement' ? CheckCircle2 : Clock" class="w-3 h-3" />
+                                <component
+                                    :is="tx.status === 'settlement' || tx.status === 'success' ? CheckCircle2 : Clock"
+                                    class="w-3 h-3" />
                                 {{ tx.status }}
                             </div>
                         </td>
+
                         <td class="px-8 py-6 text-right">
                             <div class="flex flex-col items-end">
-                                <span class="text-sm text-slate-400 font-medium">{{ new
-                                    Date(tx.created_at).toLocaleDateString() }}</span>
-                                <span class="text-[10px] text-slate-600 font-bold uppercase mt-1">{{ new
-                                    Date(tx.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-                                    }}</span>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr v-if="!isLoading && transactions.length === 0">
-                        <td colspan="5" class="px-8 py-20 text-center">
-                            <div class="flex flex-col items-center opacity-20">
-                                <CreditCard class="w-12 h-12 mb-4 text-slate-500" />
-                                <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Belum ada data
-                                    transaksi</p>
+                                <span class="text-sm text-slate-400 font-medium">
+                                    {{ new Date(tx.created_at).toLocaleDateString('id-ID') }}
+                                </span>
+                                <span class="text-[10px] text-slate-600 font-bold uppercase mt-1">
+                                    {{ new Date(tx.created_at).toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                    minute:'2-digit'}) }}
+                                </span>
                             </div>
                         </td>
                     </tr>
@@ -134,9 +124,3 @@ const getStatusTheme = (status) => {
         </div>
     </div>
 </template>
-
-<style scoped>
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-</style>

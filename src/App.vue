@@ -3,11 +3,56 @@ import { useRoute } from 'vue-router'
 import Navbar from './components/common/Navbar.vue'
 import Footer from './components/common/Footer.vue'
 import { useNotificationStore } from './stores/notifications'
-import { CheckCircle2, AlertCircle } from 'lucide-vue-next'
-import { watch } from 'vue'
+import { useAuthStore } from './stores/auth' // Tambahkan ini
+import { CheckCircle2, AlertCircle, X } from 'lucide-vue-next'
+import { watch, onMounted } from 'vue' // Tambahkan onMounted
+import echo from './utils/echo' // Impor instance Echo kamu
 
 const route = useRoute()
 const notify = useNotificationStore()
+const auth = useAuthStore()
+
+// --- KODE MATA-MATA WEBSOCKET ---
+onMounted(() => {
+  console.log("%c🕵️ Monitoring WebSocket Aktif", "color: #10b981; font-weight: bold; font-size: 12px;");
+
+  if (window.Pusher && window.Pusher.instances.length > 0) {
+    const pusher = window.Pusher.instances[0];
+
+    // 1. Pantau Perubahan Status
+    pusher.connection.bind('state_change', (states) => {
+      const colors = {
+        connected: '#10b981',
+        connecting: '#f59e0b',
+        unavailable: '#ef4444',
+        failed: '#ef4444',
+        disconnected: '#6b7280'
+      };
+      console.log(`%c[WS Status]: ${states.current}`, `color: ${colors[states.current] || '#fff'}; font-weight: bold`);
+    });
+
+    // 2. Tangkap Error Spesifik
+    pusher.connection.bind('error', (err) => {
+      console.error("%c❌ WEBSOCKET ERROR DETECTED", "background: #ef4444; color: white; padding: 2px 5px; border-radius: 4px;");
+
+      if (err.error) {
+        console.error("Pesan Error:", err.error.message);
+        console.error("Kode Error:", err.error.code);
+      }
+
+      // Analisa Error 404 (Sesuai gambar kamu tadi)
+      if (err.status === 404 || (err.error && err.error.message.includes('404'))) {
+        console.warn("💡 Analisa: Server Reverb di Backend belum jalan atau Ngrok salah arah port.");
+      }
+    });
+  }
+
+  // 3. Jalankan Listener jika sudah login
+  if (auth.isAuthenticated && auth.user) {
+    notify.listenToVideoUpdates(auth.user.id);
+  }
+})
+// --- END KODE MATA-MATA ---
 
 watch(() => route.path, () => {
   const container = document.getElementById('scroll-container')
@@ -19,7 +64,6 @@ watch(() => route.path, () => {
 
 <template>
   <div class="h-screen flex flex-col bg-timeclip-dark overflow-hidden">
-
     <Navbar v-if="!route.meta.hideNav" />
 
     <div id="scroll-container" class="grow relative flex flex-col"
@@ -37,7 +81,7 @@ watch(() => route.path, () => {
 
     <transition name="toast">
       <div v-if="notify.isVisible"
-        class="fixed bottom-10 right-10 z-400 flex items-center gap-4 px-6 py-4 rounded-2xl border backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-500 min-w-[320px]"
+        class="fixed bottom-10 right-10 z-200 flex items-center gap-4 px-6 py-4 rounded-2xl border backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-500 min-w-[320px]"
         :class="notify.type === 'success'
           ? 'bg-timeclip-emerald/10 border-timeclip-emerald/20 text-timeclip-emerald'
           : 'bg-red-500/10 border-red-500/20 text-red-500'">
@@ -61,49 +105,3 @@ watch(() => route.path, () => {
     </transition>
   </div>
 </template>
-
-<style>
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
-  background-color: #0B0F17;
-}
-
-/* Page Transitions */
-.page-enter-active,
-.page-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.page-enter-from {
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.page-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-/* Toast Animations */
-.toast-enter-active {
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.toast-leave-active {
-  transition: all 0.4s ease-in;
-}
-
-.toast-enter-from {
-  opacity: 0;
-  transform: translateY(40px) scale(0.8);
-}
-
-.toast-leave-to {
-  opacity: 0;
-  transform: translateX(100px);
-}
-</style>

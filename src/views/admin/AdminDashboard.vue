@@ -1,11 +1,15 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { adminService } from '../../services/adminService'
-import { Zap, Activity, ShieldAlert, BarChart3, Clock } from 'lucide-vue-next'
+import { Zap, Activity, ShieldAlert, BarChart3, Clock, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 
 const stats = ref(null)
 const summary = ref({})
 const logs = ref([])
+
+// --- STATE UNTUK PAGINATION ---
+const currentPage = ref(1)
+const itemsPerPage = 10
 
 onMounted(async () => {
     try {
@@ -20,7 +24,24 @@ onMounted(async () => {
     }
 })
 
-// Logika warna level log sesuai guide [cite: 266, 267]
+// --- LOGIC PAGINATION ---
+const totalPages = computed(() => Math.ceil(logs.value.length / itemsPerPage))
+
+const paginatedLogs = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage
+    const end = start + itemsPerPage
+    return logs.value.slice(start, end)
+})
+
+const prevPage = () => {
+    if (currentPage.value > 1) currentPage.value--
+}
+
+const nextPage = () => {
+    if (currentPage.value < totalPages.value) currentPage.value++
+}
+
+// Logika warna level log
 const getLogLevelColor = (level) => {
     if (level === 'ERROR') return 'text-rose-400 bg-rose-400/10 border-rose-400/20'
     if (level === 'WARNING') return 'text-amber-400 bg-amber-400/10 border-amber-400/20'
@@ -110,8 +131,9 @@ const getLogLevelColor = (level) => {
 
         <div class="bg-[#0E1118] border border-white/5 rounded-[2.5rem] p-8 shadow-2xl">
             <h4 class="text-white font-bold mb-8 text-sm uppercase tracking-widest">Recent System Logs</h4>
-            <div class="space-y-3 max-h-100 overflow-y-auto pr-2 custom-scrollbar">
-                <div v-for="log in logs" :key="log.id"
+
+            <div class="space-y-3 min-h-100">
+                <div v-for="log in paginatedLogs" :key="log.id"
                     class="flex items-center justify-between p-4 bg-white/2 border border-white/5 rounded-2xl hover:bg-white/4 transition-all group">
                     <div class="flex flex-col gap-1">
                         <div class="flex items-center gap-2">
@@ -124,18 +146,31 @@ const getLogLevelColor = (level) => {
                         <span class="text-[9px] text-slate-600 font-medium tracking-tight">{{ log.created_at }}</span>
                     </div>
                 </div>
+
+                <div v-if="logs.length === 0" class="text-center text-slate-500 text-sm py-10">
+                    Tidak ada log sistem.
+                </div>
             </div>
+
+            <div v-if="totalPages > 1" class="flex items-center justify-between mt-8 pt-6 border-t border-white/5">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Page <span class="text-white">{{ currentPage }}</span> of <span class="text-white">{{ totalPages
+                        }}</span>
+                </span>
+
+                <div class="flex gap-2">
+                    <button @click="prevPage" :disabled="currentPage === 1"
+                        class="flex items-center gap-1 px-4 py-2.5 text-xs font-bold text-white bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                        <ChevronLeft class="w-4 h-4" /> Prev
+                    </button>
+                    <button @click="nextPage" :disabled="currentPage === totalPages"
+                        class="flex items-center gap-1 px-4 py-2.5 text-xs font-bold text-white bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                        Next
+                        <ChevronRight class="w-4 h-4" />
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
 </template>
-
-<style scoped>
-.custom-scrollbar::-webkit-scrollbar {
-    width: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #ffffff10;
-    border-radius: 10px;
-}
-</style>

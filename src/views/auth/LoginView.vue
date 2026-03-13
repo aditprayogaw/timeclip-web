@@ -12,10 +12,11 @@ const notify = useNotificationStore()
 const errorMessage = ref('')
 const showPassword = ref(false)
 const form = ref({ email: '', password: '' })
-const isLoading = ref(false)
+const isLoading = ref(false) // Gunakan ini secara konsisten
 
 const socialLogin = (provider) => {
-    window.location.href = `http://127.0.0.1:8000/api/auth/${provider}/redirect`;
+    // Sesuai Section 2.5: OAuth GitHub [cite: 60, 61]
+    window.location.href = `http://localhost:8000/api/auth/${provider}/redirect`;
 }
 
 const handleLogin = async () => {
@@ -23,14 +24,23 @@ const handleLogin = async () => {
     isLoading.value = true
 
     try {
-        await authStore.login(form.value)
+        const response = await authStore.login(form.value)
 
-        const notify = useNotificationStore()
-        notify.show('Selamat datang kembali!', 'success')
+        if (response.data.status === 'success') {
+            notify.show('Selamat datang kembali!', 'success')
 
-        router.push('/dashboard')
+            const userRole = response.data.user.role;
+
+            if (userRole === 'admin') {
+                router.push('/admin/dashboard')
+            } else if (userRole === 'owner') {
+                router.push('/owner/dashboard') // Jika owner juga mau dipisah
+            } else {
+                router.push('/dashboard') // Default untuk tenant/user biasa
+            }
+        }
     } catch (error) {
-        errorMessage.value = error.response?.data?.message || 'Login failed'
+        errorMessage.value = error.response?.data?.message || 'Email atau password salah!'
     } finally {
         isLoading.value = false
     }
@@ -80,10 +90,10 @@ const handleLogin = async () => {
                     </div>
                 </div>
 
-                <button :disabled="authStore.isLoading"
+                <button type="submit" :disabled="isLoading"
                     class="w-full bg-timeclip-emerald text-white py-4 rounded-2xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 hover:bg-opacity-90 transition-all shadow-lg shadow-timeclip-emerald/20 disabled:opacity-50">
-                    <Loader2 v-if="authStore.isLoading" class="w-5 h-5 animate-spin" />
-                    <span>{{ authStore.isLoading ? 'Processing...' : 'Sign In' }}</span>
+                    <Loader2 v-if="isLoading" class="w-5 h-5 animate-spin" />
+                    <span>{{ isLoading ? 'Processing...' : 'Sign In' }}</span>
                 </button>
 
                 <span

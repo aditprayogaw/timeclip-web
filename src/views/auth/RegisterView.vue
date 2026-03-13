@@ -10,9 +10,10 @@ const notify = useNotificationStore()
 
 const isLoading = ref(false)
 const showPassword = ref(false)
-
 const socialLogin = (provider) => {
-    window.location.href = `http://localhost:8000/api/auth/${provider}/redirect`;
+    // GANTI: Jangan pakai localhost, pakai URL Ngrok agar redirect kembali berfungsi
+    const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
+    window.location.href = `${baseUrl}/api/auth/${provider}/redirect`;
 }
 
 const form = ref({
@@ -35,15 +36,18 @@ const handleRegister = async () => {
 
     isLoading.value = true
     try {
-        await api.get('../sanctum/csrf-cookie')
+        // PERBAIKAN: Gunakan URL absolut untuk CSRF agar domain cookie sinkron dengan Ngrok
+        const rootUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
+        await api.get(`${rootUrl}/sanctum/csrf-cookie`);
 
         const response = await api.post('/register', form.value)
 
-        notify.show('Account created! Please log in.', 'success')
-        router.push('/login')
-        
-    } catch (error) {
+        if (response.data.status === 'success') {
+            notify.show('Account created! Please log in.', 'success')
+            router.push('/login')
+        }
 
+    } catch (error) {
         if (error.response && error.response.status === 422) {
             const firstError = Object.values(error.response.data.errors)[0][0]
             notify.show(firstError, 'error')
@@ -123,7 +127,7 @@ const handleRegister = async () => {
 
                 <span class="flex items-center gap-4 my-6">
                     <hr class="flex-1 border-gray-700" />
-                     <span class="text-gray-500 text-[10px] uppercase tracking-widest font-bold">Or continue with</span>
+                    <span class="text-gray-500 text-[10px] uppercase tracking-widest font-bold">Or continue with</span>
                     <hr class="flex-1 border-gray-700" />
                 </span>
 
