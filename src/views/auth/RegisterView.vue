@@ -10,10 +10,10 @@ const notify = useNotificationStore()
 
 const isLoading = ref(false)
 const showPassword = ref(false)
+
 const socialLogin = (provider) => {
-    // GANTI: Jangan pakai localhost, pakai URL Ngrok agar redirect kembali berfungsi
-    const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
-    window.location.href = `${baseUrl}/api/auth/${provider}/redirect`;
+    // Samakan dengan LoginView
+    window.location.href = `http://localhost:8000/api/auth/${provider}/redirect`;
 }
 
 const form = ref({
@@ -36,9 +36,8 @@ const handleRegister = async () => {
 
     isLoading.value = true
     try {
-        // PERBAIKAN: Gunakan URL absolut untuk CSRF agar domain cookie sinkron dengan Ngrok
-        const rootUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
-        await api.get(`${rootUrl}/sanctum/csrf-cookie`);
+        // Langsung tembak ke root domain localhost untuk ambil ijin CSRF
+        await api.get('http://localhost:8000/sanctum/csrf-cookie');
 
         const response = await api.post('/register', form.value)
 

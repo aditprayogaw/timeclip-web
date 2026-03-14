@@ -1,29 +1,23 @@
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import apiClient from './axios'; // Pastikan path ke axios sudah benar
+import api from './axios'; // Karena berada di folder yang sama (utils)
 
 window.Pusher = Pusher;
 
-// 1. Membersihkan Host (PENTING)
-const rawHost = import.meta.env.VITE_REVERB_HOST;
-const cleanHost = rawHost.replace(/^https?:\/\//, '');
-
 const echo = new Echo({
     broadcaster: 'reverb',
-    // Gunakan key dari .env agar tidak bentrok dengan milik temanmu
-    key: import.meta.env.VITE_REVERB_APP_KEY,
-    wsHost: cleanHost,
-    wsPort: 443,
-    wssPort: 443,
-    forceTLS: true, // WAJIB true untuk Ngrok (HTTPS/WSS)
-    disableStats: true,
+    key: import.meta.env.VITE_REVERB_APP_KEY || 'n82dtcebxl6x7bpfhshp',
+    wsHost: import.meta.env.VITE_REVERB_HOST || '127.0.0.1',
+    wsPort: import.meta.env.VITE_REVERB_PORT || 8080,
+    wssPort: import.meta.env.VITE_REVERB_PORT || 8080,
+    forceTLS: false,
     enabledTransports: ['ws', 'wss'],
-
-    // 2. Custom Authorizer
+    disableStats: true,
+    // FIX AUTHENTICATION PATH
     authorizer: (channel, options) => {
         return {
             authorize: (socketId, callback) => {
-                apiClient.post('/broadcasting/auth', {
+                api.post('/broadcasting/auth', {
                     socket_id: socketId,
                     channel_name: channel.name
                 })
@@ -31,7 +25,6 @@ const echo = new Echo({
                         callback(false, response.data);
                     })
                     .catch(error => {
-                        console.error("Broadcasting auth failed:", error);
                         callback(true, error);
                     });
             }

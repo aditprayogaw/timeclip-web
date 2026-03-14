@@ -1,72 +1,65 @@
 import { defineStore } from 'pinia'
 import api from '../utils/axios'
-import Echo from '../utils/echo' // Impor Echo
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         user: JSON.parse(localStorage.getItem('user')) || null,
         token: localStorage.getItem('token') || null,
     }),
-
     getters: {
         isAuthenticated: (state) => !!state.token,
-        isAdmin: (state) => state.user?.role === 'admin',
-        userCredits: (state) => state.user?.remaining_credits || 0,
-        userTier: (state) => state.user?.tier?.toUpperCase() || 'FREE'
+        userCredits: (state) => state.user?.remaining_credits || 0
     },
-
     actions: {
         async login(credentials) {
             try {
-                const rootUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
-                await api.get(`${rootUrl}/sanctum/csrf-cookie`);
+                // LANGKAH 1: Ambil CSRF Cookie 
+                // Gunakan URL Lengkap untuk menghindari prefix /api
+                await api.get('http://localhost:8000/sanctum/csrf-cookie');
 
+                // LANGKAH 2: Melakukan Login
+                // Ini akan menembak ke http://localhost:8000/api/login
                 const response = await api.post('/login', credentials);
 
-                if (response.data.status === 'success') {
-                    this.token = response.data.access_token;
-                    this.user = response.data.user;
+                // Ambil data dari response
+                const token = response.data.access_token;
+                const user = response.data.user;
 
-                    localStorage.setItem('token', this.token);
-                    localStorage.setItem('user', JSON.stringify(this.user));
+                // Simpan ke state
+                this.token = token;
+                this.user = user;
 
-                    // Refresh diperlukan agar Echo mendeteksi token baru di localStorage
-                    window.location.reload();
+                // Simpan ke storage
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(user));
 
-                    return response;
-                }
+                return response;
             } catch (error) {
-                console.error("Login gagal:", error.response?.data || error.message);
+                console.error("Login Store Error:", error.response?.data);
                 throw error;
             }
         },
-
         async logout() {
             try {
-                // Berhenti mendengarkan semua channel sebelum logout
-                Echo.disconnect();
+                // Panggil logout ke backend jika perlu
                 await api.post('/logout');
-            } catch (err) {
-                console.error("Logout error", err);
+            } catch (e) {
+                console.error("Logout error:", e);
             } finally {
-                this.token = null;
-                this.user = null;
-                localStorage.clear();
-                window.location.href = '/login';
+                // Tetap hapus data lokal meskipun request gagal
+                this.token = null
+                this.user = null
+                localStorage.clear()
             }
         },
-
-        async fetchUserCredits() {
-            if (!this.token) return;
+        async fetchUser() {
             try {
                 const response = await api.get('/user/credits');
-                if (response.data) {
-                    this.user = { ...this.user, ...response.data };
-                    localStorage.setItem('user', JSON.stringify(this.user));
-                }
+                this.user = { ...this.user, ...response.data };
+                localStorage.setItem('user', JSON.stringify(this.user));
             } catch (error) {
                 console.error('Failed to fetch user credits:', error);
             }
-        }
+        },
     }
 })

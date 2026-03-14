@@ -14,50 +14,28 @@ const showPassword = ref(false)
 const form = ref({ email: '', password: '' })
 const isLoading = ref(false)
 
-/**
- * Handle Social Login (GitHub/Google) via Ngrok
- * Mengambil root URL dari .env agar tidak hardcoded localhost
- */
 const socialLogin = (provider) => {
-    // Ambil base URL dari env, hilangkan /api untuk dapat root domain
-    const rootUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
-
-    // Redirect ke endpoint backend via Ngrok
-    window.location.href = `${rootUrl}/api/auth/${provider}/redirect`;
+    // Hardcode ke localhost:8000 karena kita sudah tidak pakai .env Ngrok
+    window.location.href = `http://localhost:8000/api/auth/${provider}/redirect`;
 }
 
-/**
- * Handle Email & Password Login
- */
 const handleLogin = async () => {
     errorMessage.value = ''
     isLoading.value = true
-
     try {
         const response = await authStore.login(form.value)
-
-        // Cek sukses berdasarkan response data
         if (response.data.status === 'success') {
             notify.show('Selamat datang kembali!', 'success')
-
             const userRole = response.data.user.role;
-
-            // Role-based routing
-            if (userRole === 'admin') {
-                router.push('/admin/dashboard')
-            } else if (userRole === 'owner') {
-                router.push('/owner/dashboard')
-            } else {
-                router.push('/dashboard')
-            }
+            
+            // Routing berdasarkan role
+            if (userRole === 'admin') router.push('/admin/dashboard')
+            else if (userRole === 'owner') router.push('/owner/dashboard')
+            else router.push('/dashboard')
         }
     } catch (error) {
-        // Tangani error spesifik CSRF (419) yang sering muncul di Ngrok
-        if (error.response?.status === 419) {
-            errorMessage.value = 'Session expired / CSRF mismatch. Silakan refresh halaman.'
-        } else {
-            errorMessage.value = error.response?.data?.message || 'Email atau password salah!'
-        }
+        // Pesan error lebih umum untuk localhost
+        errorMessage.value = error.response?.data?.message || 'Email atau password salah!'
         console.error("Login error:", error);
     } finally {
         isLoading.value = false
