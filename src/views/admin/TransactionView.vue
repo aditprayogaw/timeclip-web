@@ -12,7 +12,6 @@ const isLoading = ref(true)
 const fetchTransactions = async () => {
     isLoading.value = true
     try {
-        // Endpoint admin sesuai Section 9.2 [cite: 251]
         const response = await api.get('/admin/transactions')
         transactions.value = response.data.data || []
     } catch (error) {

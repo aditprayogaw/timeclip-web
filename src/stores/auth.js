@@ -8,28 +8,27 @@ export const useAuthStore = defineStore('auth', {
     }),
     getters: {
         isAuthenticated: (state) => !!state.token,
-        userCredits: (state) => state.user?.remaining_credits || 0
+        // Getter untuk mengambil Tier (FREE, STARTER, PRO, BUSINESS)
+        userTier: (state) => state.user?.tier?.toUpperCase() || 'FREE',
+        userCredits: (state) => state.user?.remaining_credits || 0,
+        isAdmin: (state) => state.user?.role === 'admin'
     },
     actions: {
         async login(credentials) {
             try {
-                // LANGKAH 1: Ambil CSRF Cookie 
-                // Gunakan URL Lengkap untuk menghindari prefix /api
+                // LANGKAH 1: Ambil CSRF Cookie
                 await api.get('http://localhost:8000/sanctum/csrf-cookie');
 
                 // LANGKAH 2: Melakukan Login
-                // Ini akan menembak ke http://localhost:8000/api/login
                 const response = await api.post('/login', credentials);
 
-                // Ambil data dari response
+                // Response sukses memberikan status, access_token, dan object user
                 const token = response.data.access_token;
                 const user = response.data.user;
 
-                // Simpan ke state
                 this.token = token;
                 this.user = user;
 
-                // Simpan ke storage
                 localStorage.setItem('token', token);
                 localStorage.setItem('user', JSON.stringify(user));
 
@@ -41,24 +40,33 @@ export const useAuthStore = defineStore('auth', {
         },
         async logout() {
             try {
-                // Panggil logout ke backend jika perlu
+                // Sertakan token di header Authorization (diatur di interceptor axios)
                 await api.post('/logout');
             } catch (e) {
                 console.error("Logout error:", e);
             } finally {
-                // Tetap hapus data lokal meskipun request gagal
-                this.token = null
-                this.user = null
-                localStorage.clear()
+                this.token = null;
+                this.user = null;
+                localStorage.clear(); // Hapus token dari localStorage
+                window.location.href = '/login';
             }
         },
-        async fetchUser() {
+        // Fungsi untuk memperbarui sisa kredit dan tier terbaru
+        async fetchUserCredits() {
+            if (!this.token) return;
             try {
                 const response = await api.get('/user/credits');
-                this.user = { ...this.user, ...response.data };
-                localStorage.setItem('user', JSON.stringify(this.user));
+                // Response berisi remaining_credits, tier, max_cap, dan last_reset
+                if (response.data) {
+                    this.user = { ...this.user, ...response.data };
+                    localStorage.setItem('user', JSON.stringify(this.user));
+                }
             } catch (error) {
                 console.error('Failed to fetch user credits:', error);
+                // Jika 401, handle token expired
+                if (error.response?.status === 401) {
+                    this.logout();
+                }
             }
         },
     }

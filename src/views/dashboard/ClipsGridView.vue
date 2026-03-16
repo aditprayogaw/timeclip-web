@@ -20,30 +20,26 @@ const isLoading = ref(true)
 const selectedClip = ref(null)
 const isModalOpen = ref(false)
 
-// Fungsi untuk merakit URL Thumbnail dari Supabase secara aman
+// Ambil URL thumbnail langsung dari data backend
 const getThumbnailUrl = (clip) => {
-    if (!clip.id) return '/placeholder-thumb.jpg';
-    
-    // Rakit URL langsung ke bucket public 'timeclip'
-    return `https://sjladpjqerjvlzuusfri.storage.supabase.co/storage/v1/object/public/timeclip/thumbnails/thumb_${clip.id}.jpg`;
+    return clip.thumbnail_url || '/placeholder-thumb.jpg';
 }
 
 const fetchClips = async () => {
     isLoading.value = true
     try {
+        // Endpoint untuk mengambil klip berdasarkan video_id
         const response = await api.get(`/videos/${videoId}/clips`)
 
-        // Transformasi data: Pastikan setiap clip memiliki clip_url yang benar
+        // Gunakan endpoint stream resmi agar video bisa diputar di browser
         clips.value = response.data.data.map(clip => ({
             ...clip,
-            // Jika backend tidak mengirim URL lengkap, kita rakit di sini
-            clip_url: clip.clip_url || `https://sjladpjqerjvlzuusfri.storage.supabase.co/storage/v1/object/public/timeclip/clips/clip_${clip.id}.mp4`
+            clip_url: `http://localhost:8000/api/clips/${clip.id}/stream`
         }))
 
     } catch (error) {
         const errorMsg = error.response?.data?.message || 'Gagal memuat klip dari server.'
         notify.show(errorMsg, 'error')
-        console.error("Error fetching clips:", error)
     } finally {
         isLoading.value = false
     }
@@ -56,7 +52,7 @@ const openPreview = (clip) => {
 
 const handleDownload = (clipId) => {
     if (!clipId) return
-    // Gunakan endpoint resmi untuk download (Redirect 302 ke Supabase)
+    // Endpoint download resmi yang melakukan redirect ke storage
     const downloadUrl = `http://localhost:8000/api/clips/${clipId}/download`
     window.open(downloadUrl, '_blank')
 }
@@ -67,7 +63,6 @@ onMounted(fetchClips)
 <template>
     <div class="min-h-screen bg-[#0B0F17] font-sans text-white p-6">
         <div class="max-w-7xl mx-auto">
-
             <header class="flex items-center justify-between mb-8">
                 <div class="flex items-center gap-4">
                     <button @click="router.push('/dashboard')"
@@ -85,7 +80,7 @@ onMounted(fetchClips)
                 </div>
 
                 <button
-                    class="flex items-center gap-2 px-6 py-3 bg-timeclip-emerald text-black rounded-2xl font-black text-[11px] uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-lg shadow-timeclip-emerald/20">
+                    class="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-black rounded-2xl font-black text-[11px] uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/20">
                     <Sparkles class="w-4 h-4" /> Export All
                 </button>
             </header>
@@ -93,20 +88,18 @@ onMounted(fetchClips)
             <div v-if="!isLoading && clips.length > 0"
                 class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 <div v-for="clip in clips" :key="clip.id"
-                    class="bg-gray-900/40 rounded-[2.5rem] border border-white/5 overflow-hidden group hover:border-timeclip-emerald/40 transition-all duration-500 flex flex-col shadow-2xl">
+                    class="bg-gray-900/40 rounded-[2.5rem] border border-white/5 overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 flex flex-col shadow-2xl">
 
                     <div class="relative aspect-3/4 bg-black overflow-hidden cursor-pointer"
                         @click="openPreview(clip)">
                         <img :src="getThumbnailUrl(clip)" @error="(e) => e.target.src = '/placeholder-thumb.jpg'"
                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
-
                         <div class="absolute top-4 left-4">
                             <div
-                                class="bg-timeclip-emerald px-3 py-1 rounded-full text-black text-[10px] font-black flex items-center gap-1.5 shadow-xl">
+                                class="bg-emerald-500 px-3 py-1 rounded-full text-black text-[10px] font-black flex items-center gap-1.5 shadow-xl">
                                 <Sparkles class="w-3 h-3 fill-current" /> {{ clip.viral_score }} SCORE
                             </div>
                         </div>
-
                         <div
                             class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
                             <div
@@ -118,23 +111,20 @@ onMounted(fetchClips)
 
                     <div class="p-6 flex flex-col gap-5 bg-gray-900/40 border-t border-white/5">
                         <h3
-                            class="font-bold text-[13px] text-white line-clamp-2 leading-tight h-10 group-hover:text-timeclip-emerald transition-colors">
-                            {{ clip.title || 'Generating Title...' }}
+                            class="font-bold text-[13px] text-white line-clamp-2 leading-tight h-10 group-hover:text-emerald-500 transition-colors">
+                            {{ clip.title || 'Untitled Clip' }}
                         </h3>
-
                         <div class="flex flex-col gap-2">
                             <div class="flex gap-2">
                                 <button @click="router.push(`/dashboard/clips/${clip.id}/edit`)"
-                                    class="flex-1 flex items-center justify-center gap-2 bg-timeclip-emerald/10 text-timeclip-emerald py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-timeclip-emerald hover:text-black transition-all border border-timeclip-emerald/20 shadow-lg shadow-timeclip-emerald/5">
+                                    class="flex-1 flex items-center justify-center gap-2 bg-emerald-500/10 text-emerald-500 py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all border border-emerald-500/20">
                                     <Scissors class="w-4 h-4" /> Edit
                                 </button>
-
                                 <button @click="openPreview(clip)"
                                     class="flex-1 flex items-center justify-center gap-2 bg-white/5 text-white py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-white hover:text-black transition-all border border-white/10">
                                     <Play class="w-3.5 h-3.5" /> Watch
                                 </button>
                             </div>
-
                             <button @click="handleDownload(clip.id)"
                                 class="w-full flex items-center justify-center gap-2 bg-gray-800 text-gray-400 py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-gray-700 hover:text-white transition-all border border-white/5">
                                 <Download class="w-3.5 h-3.5" /> Download Clip
@@ -148,19 +138,13 @@ onMounted(fetchClips)
                 class="flex flex-col items-center justify-center py-40 text-center">
                 <div
                     class="w-24 h-24 bg-gray-900 rounded-[2.5rem] flex items-center justify-center mb-8 border border-gray-800 shadow-inner">
-                    <Loader2 class="w-10 h-10 text-timeclip-emerald animate-spin" />
+                    <Loader2 class="w-10 h-10 text-emerald-500 animate-spin" />
                 </div>
                 <h3 class="text-xl font-black text-white mb-2 uppercase italic tracking-tighter">AI Analysis in Progress
                 </h3>
                 <p class="text-gray-500 text-[10px] max-w-xs mx-auto leading-relaxed uppercase tracking-[0.2em]">
-                    Sedang transkripsi audio dan analisis highlight viral via Gemini API... [cite: 14, 15]
+                    Sedang transkripsi audio dan analisis highlight viral via Gemini API...
                 </p>
-            </div>
-
-            <div v-if="isLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                <div v-for="n in 5" :key="n"
-                    class="aspect-3/5 bg-gray-900/40 animate-pulse rounded-[3rem] border border-white/5">
-                </div>
             </div>
 
             <VideoModal :is-open="isModalOpen" :clip="selectedClip" @close="isModalOpen = false" />

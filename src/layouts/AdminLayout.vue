@@ -18,7 +18,9 @@ const handleLogout = () => {
 
         <aside class="w-64 bg-[#0E1118] border-r border-white/5 flex flex-col shrink-0">
             <div class="p-8">
-                <img src="/TimeCHoriC.png" alt="Logo" class="h-7 opacity-90" />
+                <a href="/dashboard" class="flex items-center gap-3">
+                    <img src="/TimeCHoriC.png" alt="Logo" class="h-10 opacity-90" />
+                </a>
                 <div
                     class="mt-2 inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">
                     <Sparkles class="w-2.5 h-2.5 text-emerald-400" />
