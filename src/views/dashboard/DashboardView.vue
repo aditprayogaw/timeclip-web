@@ -133,15 +133,23 @@ onUnmounted(() => {
     <div class="flex h-screen w-full overflow-hidden bg-[#0A0C10] text-slate-200">
         <aside class="w-64 border-r border-white/5 flex flex-col p-6 bg-[#0E1117] shrink-0">
             <div class="mb-10 px-2">
-                <img src="/TimeCHoriC.png" alt="Logo" class="h-8 opacity-90" />
+                <a href="/">
+                    <img src="/TimeCHoriC.png" alt="Logo" class="h-10 opacity-90" />
+                </a>
             </div>
 
             <nav class="flex-1 space-y-2">
                 <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-4 px-2">Menu</p>
+
                 <div
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/5 text-emerald-400 border border-emerald-500/10 font-bold text-sm tracking-tight">
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/5 text-emerald-400 border border-emerald-500/10 font-bold text-sm tracking-tight cursor-pointer">
                     <Home class="w-4 h-4" /> Dashboard
                 </div>
+
+                <router-link v-if="authStore.user?.role === 'admin'" to="/admin/dashboard"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 font-bold text-sm tracking-tight transition-all">
+                    <ShieldCheck class="w-4 h-4 text-rose-400" /> Admin Panel
+                </router-link>
             </nav>
 
             <div class="mt-auto pt-6 space-y-4 border-t border-white/5">
@@ -216,7 +224,7 @@ onUnmounted(() => {
                         Library
                         <span
                             class="px-2.5 py-0.5 bg-white/3 text-[11px] text-slate-500 rounded-lg border border-white/5 font-medium">{{
-                            allVideos.length }}</span>
+                                allVideos.length }}</span>
                     </h3>
 
                     <div v-if="totalPages > 1" class="flex items-center gap-2">
@@ -225,7 +233,7 @@ onUnmounted(() => {
                             <ChevronLeft class="w-4 h-4" />
                         </button>
                         <span class="text-[10px] font-bold px-2 text-slate-500 uppercase tracking-widest">{{ currentPage
-                            }} / {{ totalPages }}</span>
+                        }} / {{ totalPages }}</span>
                         <button @click="currentPage++" :disabled="currentPage === totalPages"
                             class="p-2 text-slate-500 hover:text-white border border-white/5 rounded-xl transition-all">
                             <ChevronRight class="w-4 h-4" />
@@ -265,7 +273,7 @@ onUnmounted(() => {
                             <Clock class="w-3.5 h-3.5" :class="{ 'animate-pulse': isVideoInProcess(video.status) }" />
                             <span>
                                 <template v-if="isVideoFailed(video.status)">{{ video.status_message || 'Error'
-                                    }}</template>
+                                }}</template>
                                 <template v-else-if="video.status === 'pending'">Waiting in Queue</template>
                                 <template v-else-if="video.status === 'processing'">AI Analyzing...</template>
                                 <template v-else>Ready to View</template>

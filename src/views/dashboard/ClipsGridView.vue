@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
     Play, Download, Sparkles, ArrowLeft,
-    Loader2, Scissors
+    Loader2, Scissors, CheckCircle2
 } from 'lucide-vue-next'
 import api from '../../utils/axios'
 import { useNotificationStore } from '../../stores/notifications'
@@ -28,14 +28,20 @@ const getThumbnailUrl = (clip) => {
 const fetchClips = async () => {
     isLoading.value = true
     try {
-        // Endpoint untuk mengambil klip berdasarkan video_id
         const response = await api.get(`/videos/${videoId}/clips`)
 
-        // Gunakan endpoint stream resmi agar video bisa diputar di browser
-        clips.value = response.data.data.map(clip => ({
-            ...clip,
-            clip_url: `http://localhost:8000/api/clips/${clip.id}/stream`
-        }))
+        clips.value = response.data.data.map(clip => {
+            // Kita siapkan flag untuk status tampilan
+            // Jika export_url tersedia di response, berarti re-render sudah SELESAI
+            const isReady = !!clip.export_url;
+
+            return {
+                ...clip,
+                is_ready: isReady,
+                // URL Utama untuk ditampilkan di Grid (Prioritas Export)
+                display_url: isReady ? clip.export_url : clip.clip_url
+            }
+        })
 
     } catch (error) {
         const errorMsg = error.response?.data?.message || 'Gagal memuat klip dari server.'
@@ -46,13 +52,18 @@ const fetchClips = async () => {
 }
 
 const openPreview = (clip) => {
-    selectedClip.value = clip
+    selectedClip.value = {
+        ...clip,
+        // Kita gunakan endpoint stream localhost agar backend yang memutuskan 
+        // folder mana yang diambil (Logic: Export ?? Raw)
+        clip_url: `http://localhost:8000/api/clips/${clip.id}/stream`
+    }
     isModalOpen.value = true
 }
 
 const handleDownload = (clipId) => {
     if (!clipId) return
-    // Endpoint download resmi yang melakukan redirect ke storage
+    // Backend akan otomatis me-redirect ke folder Export jika tersedia
     const downloadUrl = `http://localhost:8000/api/clips/${clipId}/download`
     window.open(downloadUrl, '_blank')
 }
@@ -88,18 +99,31 @@ onMounted(fetchClips)
             <div v-if="!isLoading && clips.length > 0"
                 class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 <div v-for="clip in clips" :key="clip.id"
-                    class="bg-gray-900/40 rounded-[2.5rem] border border-white/5 overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 flex flex-col shadow-2xl">
+                    class="bg-gray-900/40 rounded-[2.5rem] border border-white/5 overflow-hidden group hover:border-emerald-500/40 transition-all duration-500 flex flex-col shadow-2xl relative">
+
+                    <div class="absolute top-4 right-4 z-20">
+                        <div v-if="clip.is_ready"
+                            class="bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 px-2.5 py-1 rounded-full text-[8px] font-black uppercase flex items-center gap-1 backdrop-blur-md">
+                            <CheckCircle2 class="w-2.5 h-2.5" /> Subtitles Ready
+                        </div>
+                        <div v-else
+                            class="bg-amber-500/20 text-amber-500 border border-amber-500/30 px-2.5 py-1 rounded-full text-[8px] font-black uppercase flex items-center gap-1 backdrop-blur-md animate-pulse">
+                            <Loader2 class="w-2.5 h-2.5 animate-spin" /> Rendering
+                        </div>
+                    </div>
 
                     <div class="relative aspect-3/4 bg-black overflow-hidden cursor-pointer"
                         @click="openPreview(clip)">
                         <img :src="getThumbnailUrl(clip)" @error="(e) => e.target.src = '/placeholder-thumb.jpg'"
                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
+
                         <div class="absolute top-4 left-4">
                             <div
-                                class="bg-emerald-500 px-3 py-1 rounded-full text-black text-[10px] font-black flex items-center gap-1.5 shadow-xl">
-                                <Sparkles class="w-3 h-3 fill-current" /> {{ clip.viral_score }} SCORE
+                                class="bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-[10px] font-black flex items-center gap-1.5 shadow-xl border border-white/10">
+                                <Sparkles class="w-3 h-3 text-emerald-500 fill-current" /> {{ clip.viral_score }}
                             </div>
                         </div>
+
                         <div
                             class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
                             <div
@@ -109,12 +133,13 @@ onMounted(fetchClips)
                         </div>
                     </div>
 
-                    <div class="p-6 flex flex-col gap-5 bg-gray-900/40 border-t border-white/5">
+                    <div class="p-6 flex flex-col gap-5 bg-gray-900/40 border-t border-white/5 flex-1">
                         <h3
-                            class="font-bold text-[13px] text-white line-clamp-2 leading-tight h-10 group-hover:text-emerald-500 transition-colors">
+                            class="font-bold text-[13px] text-white line-clamp-2 leading-tight h-10 group-hover:text-emerald-500 transition-colors uppercase italic">
                             {{ clip.title || 'Untitled Clip' }}
                         </h3>
-                        <div class="flex flex-col gap-2">
+
+                        <div class="flex flex-col gap-2 mt-auto">
                             <div class="flex gap-2">
                                 <button @click="router.push(`/dashboard/clips/${clip.id}/edit`)"
                                     class="flex-1 flex items-center justify-center gap-2 bg-emerald-500/10 text-emerald-500 py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all border border-emerald-500/20">
@@ -125,9 +150,12 @@ onMounted(fetchClips)
                                     <Play class="w-3.5 h-3.5" /> Watch
                                 </button>
                             </div>
+
                             <button @click="handleDownload(clip.id)"
-                                class="w-full flex items-center justify-center gap-2 bg-gray-800 text-gray-400 py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-gray-700 hover:text-white transition-all border border-white/5">
-                                <Download class="w-3.5 h-3.5" /> Download Clip
+                                :class="['w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest transition-all border',
+                                    clip.is_ready ? 'bg-gray-800 text-white border-white/10 hover:bg-emerald-500 hover:text-black' : 'bg-gray-900 text-gray-600 border-white/5 cursor-not-allowed opacity-50']">
+                                <Download class="w-3.5 h-3.5" />
+                                {{ clip.is_ready ? 'Download Clip' : 'Processing...' }}
                             </button>
                         </div>
                     </div>
@@ -151,3 +179,10 @@ onMounted(fetchClips)
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Transisi halus untuk grid hover */
+.group:hover {
+    transform: translateY(-4px);
+}
+</style>

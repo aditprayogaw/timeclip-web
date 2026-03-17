@@ -25,7 +25,7 @@ const handleSubscribe = async (tier) => {
     }
 }
 
-// Step 2: Membuka Popup Midtrans [cite: 225, 229]
+// Step 2: Membuka Popup Midtrans 
 const openMidtransSnap = (token) => {
     window.snap.pay(token, {
         onSuccess: (result) => {
