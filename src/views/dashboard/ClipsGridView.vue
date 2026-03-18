@@ -81,7 +81,7 @@ onMounted(fetchClips)
                         <ArrowLeft class="w-4 h-4" />
                     </button>
                     <div>
-                        <h1 class="text-xl font-black tracking-tighter uppercase italic leading-none text-white">
+                        <h1 class="text-xl font-bold tracking-tighter uppercase leading-none text-white">
                             Viral Clips
                         </h1>
                         <p class="text-gray-500 text-[10px] font-bold mt-1 uppercase tracking-[0.2em]">
@@ -91,7 +91,7 @@ onMounted(fetchClips)
                 </div>
 
                 <button
-                    class="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-black rounded-2xl font-black text-[11px] uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/20">
+                    class="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-black rounded-2xl font-bold text-[11px] uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-emerald-500/20">
                     <Sparkles class="w-4 h-4" /> Export All
                 </button>
             </header>
@@ -103,11 +103,11 @@ onMounted(fetchClips)
 
                     <div class="absolute top-4 right-4 z-20">
                         <div v-if="clip.is_ready"
-                            class="bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 px-2.5 py-1 rounded-full text-[8px] font-black uppercase flex items-center gap-1 backdrop-blur-md">
+                            class="bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 px-2.5 py-1 rounded-full text-[8px] font-bold uppercase flex items-center gap-1 backdrop-blur-md">
                             <CheckCircle2 class="w-2.5 h-2.5" /> Subtitles Ready
                         </div>
                         <div v-else
-                            class="bg-amber-500/20 text-amber-500 border border-amber-500/30 px-2.5 py-1 rounded-full text-[8px] font-black uppercase flex items-center gap-1 backdrop-blur-md animate-pulse">
+                            class="bg-amber-500/20 text-amber-500 border border-amber-500/30 px-2.5 py-1 rounded-full text-[8px] font-bold uppercase flex items-center gap-1 backdrop-blur-md animate-pulse">
                             <Loader2 class="w-2.5 h-2.5 animate-spin" /> Rendering
                         </div>
                     </div>
@@ -119,7 +119,7 @@ onMounted(fetchClips)
 
                         <div class="absolute top-4 left-4">
                             <div
-                                class="bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-[10px] font-black flex items-center gap-1.5 shadow-xl border border-white/10">
+                                class="bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-[10px] font-bold flex items-center gap-1.5 shadow-xl border border-white/10">
                                 <Sparkles class="w-3 h-3 text-emerald-500 fill-current" /> {{ clip.viral_score }}
                             </div>
                         </div>
@@ -135,24 +135,24 @@ onMounted(fetchClips)
 
                     <div class="p-6 flex flex-col gap-5 bg-gray-900/40 border-t border-white/5 flex-1">
                         <h3
-                            class="font-bold text-[13px] text-white line-clamp-2 leading-tight h-10 group-hover:text-emerald-500 transition-colors uppercase italic">
+                            class="font-bold text-[13px] text-white line-clamp-2 leading-tight h-10 group-hover:text-emerald-500 transition-colors uppercase">
                             {{ clip.title || 'Untitled Clip' }}
                         </h3>
 
                         <div class="flex flex-col gap-2 mt-auto">
                             <div class="flex gap-2">
                                 <button @click="router.push(`/dashboard/clips/${clip.id}/edit`)"
-                                    class="flex-1 flex items-center justify-center gap-2 bg-emerald-500/10 text-emerald-500 py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all border border-emerald-500/20">
+                                    class="flex-1 flex items-center justify-center gap-2 bg-emerald-500/10 text-emerald-500 py-3 rounded-2xl font-bold text-[9px] uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all border border-emerald-500/20">
                                     <Scissors class="w-4 h-4" /> Edit
                                 </button>
                                 <button @click="openPreview(clip)"
-                                    class="flex-1 flex items-center justify-center gap-2 bg-white/5 text-white py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-white hover:text-black transition-all border border-white/10">
+                                    class="flex-1 flex items-center justify-center gap-2 bg-white/5 text-white py-3 rounded-2xl font-bold text-[9px] uppercase tracking-widest hover:bg-white hover:text-black transition-all border border-white/10">
                                     <Play class="w-3.5 h-3.5" /> Watch
                                 </button>
                             </div>
 
                             <button @click="handleDownload(clip.id)"
-                                :class="['w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-black text-[9px] uppercase tracking-widest transition-all border',
+                                :class="['w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-[9px] uppercase tracking-widest transition-all border',
                                     clip.is_ready ? 'bg-gray-800 text-white border-white/10 hover:bg-emerald-500 hover:text-black' : 'bg-gray-900 text-gray-600 border-white/5 cursor-not-allowed opacity-50']">
                                 <Download class="w-3.5 h-3.5" />
                                 {{ clip.is_ready ? 'Download Clip' : 'Processing...' }}
@@ -168,7 +168,7 @@ onMounted(fetchClips)
                     class="w-24 h-24 bg-gray-900 rounded-[2.5rem] flex items-center justify-center mb-8 border border-gray-800 shadow-inner">
                     <Loader2 class="w-10 h-10 text-emerald-500 animate-spin" />
                 </div>
-                <h3 class="text-xl font-black text-white mb-2 uppercase italic tracking-tighter">AI Analysis in Progress
+                <h3 class="text-xl font-bold text-white mb-2 uppercase tracking-tighter">AI Analysis in Progress
                 </h3>
                 <p class="text-gray-500 text-[10px] max-w-xs mx-auto leading-relaxed uppercase tracking-[0.2em]">
                     Sedang transkripsi audio dan analisis highlight viral via Gemini API...
